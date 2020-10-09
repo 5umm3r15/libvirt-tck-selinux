@@ -1,0 +1,60 @@
+
+## <summary>policy for libvirt_tck</summary>
+
+########################################
+## <summary>
+##	Execute libvirt_tck_exec_t in the libvirt_tck domain.
+## </summary>
+## <param name="domain">
+## <summary>
+##	Domain allowed to transition.
+## </summary>
+## </param>
+#
+interface(`libvirt_tck_domtrans',`
+	gen_require(`
+		type libvirt_tck_t, libvirt_tck_exec_t;
+	')
+
+	corecmd_search_bin($1)
+	domtrans_pattern($1, libvirt_tck_exec_t, libvirt_tck_t)
+')
+
+######################################
+## <summary>
+##	Execute libvirt_tck in the caller domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`libvirt_tck_exec',`
+	gen_require(`
+		type libvirt_tck_exec_t;
+	')
+
+	corecmd_search_bin($1)
+	can_exec($1, libvirt_tck_exec_t)
+')
+
+######################################
+## <summary>
+##	Execute libvirt_tck in the unconfined role.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`libvirt_tck_unconfined_role',`
+         optional_policy(`
+                  gen_require(`
+                          role unconfined_r;
+                  ')
+                  role unconfined_r types $1;
+         ')
+')
+
